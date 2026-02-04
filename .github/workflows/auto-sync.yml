@@ -1,0 +1,48 @@
+name: Auto Sync Every 3 Hours
+
+on:
+  schedule:
+    # Run every 3 hours (0, 3, 6, 9, 12, 15, 18, 21 UTC)
+    - cron: '0 */3 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  auto-sync:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Configure Git
+      run: |
+        git config --global user.name "Auto Sync Bot"
+        git config --global user.email "autosync@chimera.bot"
+    
+    - name: Pull latest changes
+      run: |
+        git fetch origin main
+        git pull origin main
+    
+    - name: Check for changes and create sync commit
+      run: |
+        if [ -n "$(git status --porcelain)" ]; then
+          echo "Changes detected, creating sync commit"
+          git add .
+          git commit -m "chore: auto-sync at $(date -u '+%Y-%m-%d %H:%M:%S UTC')
+          
+          - Automated 3-hour sync policy execution
+          - Ensures repository stays current with latest changes
+          - Maintains continuous integration workflow"
+          git push origin main
+        else
+          echo "No changes to sync"
+        fi
+    
+    - name: Log sync status
+      run: |
+        echo "Auto-sync completed at $(date -u)"
+        echo "Last commit: $(git log -1 --oneline)"

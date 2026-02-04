@@ -196,8 +196,24 @@ CORS_ORIGINS=http://localhost:3000,http://localhost:8080
 EOF
 	@echo "✅ .env.template created. Copy to .env and fill in your values."
 
-# Daily Development
-daily: ## Daily development routine
+# Auto-sync helpers
+auto-sync: ## Run auto-sync to pull latest changes
+	./scripts/auto-sync.sh
+
+setup-sync: ## Setup 3-hour auto-sync cron job
+	./scripts/setup-cron.sh
+
+check-sync: ## Check auto-sync status and logs
+	@echo "📊 Auto-sync Status:"
+	@if crontab -l 2>/dev/null | grep -q "auto-sync.sh"; then \
+		echo "✅ Cron job active"; \
+		crontab -l | grep "auto-sync.sh"; \
+	else \
+		echo "❌ Cron job not found"; \
+	fi
+	@echo ""
+	@echo "📝 Recent sync logs:"
+	@if [ -f logs/auto-sync.log ]; then tail -10 logs/auto-sync.log; else echo "No logs found"; fi
 	@echo "🌅 Starting daily development routine..."
 	git pull origin main
 	uv sync --all-extras

@@ -76,6 +76,26 @@ make serve
 - [ ] Performance optimization and scaling
 - [ ] Advanced MCP server integrations
 
+## Auto-Sync Policy
+This project implements a 3-hour auto-sync policy to ensure continuous integration:
+
+### Automated Sync (GitHub Actions)
+- Runs every 3 hours via GitHub Actions
+- Automatically pulls latest changes
+- Creates sync commits when needed
+
+### Local Development Sync
+```bash
+# Setup 3-hour auto-sync on your local machine
+make setup-sync
+
+# Manual sync
+make auto-sync
+
+# Check sync status
+make check-sync
+```
+
 ## Daily Commits
 This project maintains daily commit requirements for continuous development tracking.
 
