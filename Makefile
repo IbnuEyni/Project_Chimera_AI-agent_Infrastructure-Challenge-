@@ -1,132 +1,213 @@
-# Project Chimera Makefile
-# Standardized commands for development workflow
-
-.PHONY: help setup test lint format clean docker-build docker-test spec-check
+.PHONY: help install install-dev test test-cov lint format type-check security clean build docs serve-docs docker-build docker-run deploy-local deploy-staging deploy-prod
 
 # Default target
-help:
-	@echo "🏗️  Project Chimera - Autonomous Influencer Factory"
-	@echo ""
-	@echo "Available commands:"
-	@echo "  setup        - Install dependencies and set up environment"
-	@echo "  test         - Run all tests"
-	@echo "  lint         - Run linting checks"
-	@echo "  format       - Format code with black and isort"
-	@echo "  clean        - Clean up temporary files"
-	@echo "  docker-build - Build Docker image"
-	@echo "  docker-test  - Run tests in Docker container"
-	@echo "  spec-check   - Verify code alignment with specifications"
+help: ## Show this help message
+	@echo "Project Chimera - Development Commands"
+	@echo "======================================"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
-# Environment setup
-setup:
-	@echo "📦 Setting up Project Chimera environment..."
-	uv sync --dev
-	uv run pre-commit install
+# Environment Setup
+install: ## Install production dependencies
+	uv sync --no-dev
+
+install-dev: ## Install development dependencies
+	uv sync --all-extras
+
+setup: ## Complete development environment setup
+	@echo "🚀 Setting up Project Chimera development environment..."
+	uv sync --all-extras
+	pre-commit install
 	@echo "✅ Setup complete!"
 
+# Code Quality
+format: ## Format code with black and isort
+	uv run black src tests
+	uv run isort src tests
+
+lint: ## Run linting checks
+	uv run flake8 src tests
+	uv run black --check src tests
+	uv run isort --check-only src tests
+
+type-check: ## Run type checking with mypy
+	uv run mypy src
+
+security: ## Run security checks
+	uv run bandit -r src
+	uv run safety check
+
+quality: format lint type-check security ## Run all code quality checks
+
 # Testing
-test:
-	@echo "🧪 Running tests..."
-	uv run pytest tests/ -v --cov=chimera --cov-report=html --cov-report=term
+test: ## Run unit tests
+	uv run pytest tests/unit -v
 
-test-unit:
-	@echo "🔬 Running unit tests..."
-	uv run pytest tests/ -m "unit" -v
+test-integration: ## Run integration tests
+	uv run pytest tests/integration -v
 
-test-integration:
-	@echo "🔗 Running integration tests..."
-	uv run pytest tests/ -m "integration" -v
+test-e2e: ## Run end-to-end tests
+	uv run pytest tests/e2e -v
 
-# Code quality
-lint:
-	@echo "🔍 Running linting checks..."
-	uv run ruff check .
-	uv run mypy chimera/
-	uv run black --check .
-	uv run isort --check-only .
+test-all: ## Run all tests
+	uv run pytest tests -v
 
-format:
-	@echo "✨ Formatting code..."
-	uv run black .
-	uv run isort .
-	uv run ruff --fix .
+test-cov: ## Run tests with coverage
+	uv run pytest tests --cov=src --cov-report=html --cov-report=term-missing
 
-# Cleanup
-clean:
-	@echo "🧹 Cleaning up..."
-	find . -type f -name "*.pyc" -delete
-	find . -type d -name "__pycache__" -delete
-	find . -type d -name "*.egg-info" -exec rm -rf {} +
-	find . -type d -name ".pytest_cache" -exec rm -rf {} +
-	find . -type d -name ".mypy_cache" -exec rm -rf {} +
-	rm -rf htmlcov/
-	rm -rf dist/
-	rm -rf build/
+test-watch: ## Run tests in watch mode
+	uv run pytest-watch tests
 
-# Docker operations
-docker-build:
-	@echo "🐳 Building Docker image..."
-	docker build -t project-chimera:latest .
+# Documentation
+docs: ## Build documentation
+	uv run mkdocs build
 
-docker-test:
-	@echo "🐳 Running tests in Docker..."
-	docker run --rm -v $(PWD):/app project-chimera:latest make test
+docs-serve: ## Serve documentation locally
+	uv run mkdocs serve
 
-# Specification compliance
-spec-check:
-	@echo "📋 Checking specification compliance..."
-	@if [ ! -d "specs/" ]; then \
-		echo "❌ specs/ directory not found"; \
-		exit 1; \
-	fi
-	@if [ ! -f "specs/_meta.md" ]; then \
-		echo "❌ specs/_meta.md not found"; \
-		exit 1; \
-	fi
-	@if [ ! -f "specs/functional.md" ]; then \
-		echo "❌ specs/functional.md not found"; \
-		exit 1; \
-	fi
-	@if [ ! -f "specs/technical.md" ]; then \
-		echo "❌ specs/technical.md not found"; \
-		exit 1; \
-	fi
-	@echo "✅ All required specifications found"
-	@echo "🔍 Validating spec structure..."
-	uv run python scripts/validate_specs.py
+docs-deploy: ## Deploy documentation
+	uv run mkdocs gh-deploy
 
-# Development server
-dev:
-	@echo "🚀 Starting development server..."
+# Development Server
+serve: ## Run development server
 	uv run uvicorn chimera.main:app --reload --host 0.0.0.0 --port 8000
 
-# Database operations
-db-upgrade:
-	@echo "📊 Running database migrations..."
+serve-prod: ## Run production server
+	uv run uvicorn chimera.main:app --host 0.0.0.0 --port 8000 --workers 4
+
+# Database
+db-upgrade: ## Run database migrations
 	uv run alembic upgrade head
 
-db-downgrade:
-	@echo "📊 Rolling back database migrations..."
+db-downgrade: ## Rollback database migration
 	uv run alembic downgrade -1
 
-db-reset:
-	@echo "📊 Resetting database..."
+db-revision: ## Create new database migration
+	uv run alembic revision --autogenerate -m "$(msg)"
+
+db-reset: ## Reset database (WARNING: destroys data)
 	uv run alembic downgrade base
 	uv run alembic upgrade head
 
-# MCP operations
-mcp-check:
-	@echo "🔌 Checking MCP Sense connection..."
-	@if [ -z "$$MCP_SENSE_TOKEN" ]; then \
-		echo "❌ MCP_SENSE_TOKEN not set in environment"; \
-		exit 1; \
-	fi
-	@echo "✅ MCP Sense token configured"
+# Docker
+docker-build: ## Build Docker image
+	docker build -t project-chimera:latest .
 
-# CI/CD helpers
-ci-test: lint test
-	@echo "✅ All CI checks passed"
+docker-run: ## Run Docker container
+	docker run -p 8000:8000 --env-file .env project-chimera:latest
 
-# Release preparation
-release-check: spec-check ci-test
-	@echo "🚀 Release checks complete"
+docker-compose-up: ## Start services with docker-compose
+	docker-compose up -d
+
+docker-compose-down: ## Stop services with docker-compose
+	docker-compose down
+
+# Deployment
+deploy-local: ## Deploy to local environment
+	@echo "🚀 Deploying to local environment..."
+	docker-compose up -d
+
+deploy-staging: ## Deploy to staging environment
+	@echo "🚀 Deploying to staging environment..."
+	# Add staging deployment commands here
+
+deploy-prod: ## Deploy to production environment
+	@echo "🚀 Deploying to production environment..."
+	# Add production deployment commands here
+
+# Monitoring
+logs: ## View application logs
+	docker-compose logs -f app
+
+monitor: ## Start monitoring stack
+	docker-compose -f docker-compose.monitoring.yml up -d
+
+# Utilities
+clean: ## Clean build artifacts
+	rm -rf build/
+	rm -rf dist/
+	rm -rf *.egg-info/
+	rm -rf .pytest_cache/
+	rm -rf .mypy_cache/
+	rm -rf .coverage
+	rm -rf htmlcov/
+	find . -type d -name __pycache__ -delete
+	find . -type f -name "*.pyc" -delete
+
+build: ## Build package
+	uv build
+
+release: ## Create release
+	@echo "Creating release..."
+	# Add release commands here
+
+# CI/CD
+ci-test: ## Run CI test suite
+	uv run pytest tests --cov=src --cov-report=xml --junitxml=junit.xml
+
+ci-quality: ## Run CI quality checks
+	uv run black --check src tests
+	uv run isort --check-only src tests
+	uv run flake8 src tests
+	uv run mypy src
+	uv run bandit -r src
+	uv run safety check
+
+ci: ci-quality ci-test ## Run full CI pipeline
+
+# Development Helpers
+shell: ## Start Python shell with project context
+	uv run python
+
+notebook: ## Start Jupyter notebook
+	uv run jupyter notebook
+
+profile: ## Profile application performance
+	uv run python -m cProfile -o profile.stats src/chimera/main.py
+
+benchmark: ## Run performance benchmarks
+	uv run pytest tests/benchmarks --benchmark-only
+
+# Git Hooks
+pre-commit: ## Run pre-commit hooks
+	pre-commit run --all-files
+
+commit: ## Interactive commit with conventional commits
+	@echo "Making conventional commit..."
+	git add .
+	git commit
+
+# Environment Variables
+env-template: ## Create .env template
+	@echo "Creating .env template..."
+	@cat > .env.template << 'EOF'
+# Project Chimera Environment Variables
+DATABASE_URL=postgresql://user:password@localhost:5432/chimera
+REDIS_URL=redis://localhost:6379
+OPENAI_API_KEY=your_openai_key_here
+ANTHROPIC_API_KEY=your_anthropic_key_here
+MCP_SENSE_TOKEN=your_mcp_token_here
+COINBASE_API_KEY=your_coinbase_key_here
+COINBASE_API_SECRET=your_coinbase_secret_here
+LOG_LEVEL=INFO
+ENVIRONMENT=development
+SECRET_KEY=your_secret_key_here
+JWT_SECRET=your_jwt_secret_here
+CORS_ORIGINS=http://localhost:3000,http://localhost:8080
+EOF
+	@echo "✅ .env.template created. Copy to .env and fill in your values."
+
+# Daily Development
+daily: ## Daily development routine
+	@echo "🌅 Starting daily development routine..."
+	git pull origin main
+	uv sync --all-extras
+	make quality
+	make test
+	@echo "✅ Daily routine complete!"
+
+commit-daily: ## Make daily commit
+	@echo "📝 Making daily commit..."
+	git add .
+	git commit -m "Daily progress: $(shell date '+%Y-%m-%d')"
+	git push origin main
+	@echo "✅ Daily commit pushed!"
