@@ -1,4 +1,4 @@
-.PHONY: help install install-dev test test-cov lint format type-check security clean build docs serve-docs docker-build docker-run deploy-local deploy-staging deploy-prod
+.PHONY: help install install-dev setup setup-golden mcp-verify mcp-health mcp-monitor-setup test test-cov lint format type-check security clean build docs serve-docs docker-build docker-run deploy-local deploy-staging deploy-prod
 
 # Default target
 help: ## Show this help message
@@ -18,6 +18,24 @@ setup: ## Complete development environment setup
 	uv sync --all-extras
 	pre-commit install
 	@echo "✅ Setup complete!"
+
+setup-golden: ## Golden environment: tooling + MCP Sense integration
+	@./scripts/setup-golden-env.sh
+
+# MCP Sense Integration
+mcp-verify: ## Verify Tenx MCP Sense connection
+	@./scripts/mcp-verify.sh --verbose
+
+mcp-diagnostic: ## Run comprehensive MCP diagnostic
+	@./scripts/mcp-diagnostic.sh
+
+mcp-health: ## Run MCP health check (for cron/monitoring)
+	@./scripts/mcp-health-check.sh
+
+mcp-monitor-setup: ## Install cron job for MCP health monitoring (every 15 min)
+	@echo "Adding MCP health check to crontab..."
+	@(crontab -l 2>/dev/null | grep -v "mcp-health-check"; echo "*/15 * * * * $(shell pwd)/scripts/mcp-health-check.sh") | crontab -
+	@echo "✅ MCP monitoring installed (every 15 min)"
 
 # Code Quality
 format: ## Format code with black and isort
@@ -179,21 +197,7 @@ commit: ## Interactive commit with conventional commits
 # Environment Variables
 env-template: ## Create .env template
 	@echo "Creating .env template..."
-	@cat > .env.template << 'EOF'
-# Project Chimera Environment Variables
-DATABASE_URL=postgresql://user:password@localhost:5432/chimera
-REDIS_URL=redis://localhost:6379
-OPENAI_API_KEY=your_openai_key_here
-ANTHROPIC_API_KEY=your_anthropic_key_here
-MCP_SENSE_TOKEN=your_mcp_token_here
-COINBASE_API_KEY=your_coinbase_key_here
-COINBASE_API_SECRET=your_coinbase_secret_here
-LOG_LEVEL=INFO
-ENVIRONMENT=development
-SECRET_KEY=your_secret_key_here
-JWT_SECRET=your_jwt_secret_here
-CORS_ORIGINS=http://localhost:3000,http://localhost:8080
-EOF
+	@./scripts/gen-env-template.sh
 	@echo "✅ .env.template created. Copy to .env and fill in your values."
 
 # Auto-sync helpers
@@ -214,6 +218,9 @@ check-sync: ## Check auto-sync status and logs
 	@echo ""
 	@echo "📝 Recent sync logs:"
 	@if [ -f logs/auto-sync.log ]; then tail -10 logs/auto-sync.log; else echo "No logs found"; fi
+
+# Daily Development
+daily: ## Daily development routine
 	@echo "🌅 Starting daily development routine..."
 	git pull origin main
 	uv sync --all-extras
