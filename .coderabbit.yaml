@@ -1,0 +1,186 @@
+# CodeRabbit AI Review Configuration for Project Chimera
+# This configures automated AI code review for spec alignment and security
+
+language: en
+early_access: false
+reviews:
+  profile: assertive
+  request_changes_workflow: true
+  high_level_summary: true
+  poem: false
+  review_status: true
+  collapse_walkthrough: false
+  auto_review:
+    enabled: true
+    drafts: false
+    base_branches:
+      - main
+      - develop
+
+chat:
+  auto_reply: true
+
+# Custom review rules for Project Chimera
+rules:
+  - name: "Spec Alignment Check"
+    description: "Verify code aligns with specifications in specs/ directory"
+    pattern: "src/**/*.py"
+    checks:
+      - type: "custom"
+        message: "Does this implementation match the specifications in specs/technical.md?"
+        severity: "error"
+      - type: "custom"
+        message: "Are API contracts (input/output) consistent with specs/functional.md?"
+        severity: "error"
+      - type: "custom"
+        message: "Does this follow the architecture defined in specs/_meta.md?"
+        severity: "warning"
+
+  - name: "Security Vulnerability Check"
+    description: "Check for security vulnerabilities and unsafe patterns"
+    pattern: "**/*.py"
+    checks:
+      - type: "security"
+        message: "Check for SQL injection vulnerabilities"
+        severity: "critical"
+      - type: "security"
+        message: "Verify input sanitization for prompt injection"
+        severity: "critical"
+      - type: "security"
+        message: "Check for hardcoded secrets or API keys"
+        severity: "critical"
+      - type: "security"
+        message: "Verify proper authentication and authorization"
+        severity: "error"
+      - type: "security"
+        message: "Check for insecure cryptographic practices"
+        severity: "error"
+
+  - name: "Financial Safety Check"
+    description: "Verify financial transaction safety mechanisms"
+    pattern: "src/chimera/commerce/**/*.py"
+    checks:
+      - type: "custom"
+        message: "Are budget limits enforced?"
+        severity: "critical"
+      - type: "custom"
+        message: "Is CFO approval required for transactions?"
+        severity: "critical"
+      - type: "custom"
+        message: "Are transaction amounts validated?"
+        severity: "error"
+      - type: "custom"
+        message: "Is audit logging implemented?"
+        severity: "error"
+
+  - name: "Agent Safety Check"
+    description: "Verify agent behavior safety mechanisms"
+    pattern: "src/chimera/agents/**/*.py"
+    checks:
+      - type: "custom"
+        message: "Are confidence thresholds properly implemented?"
+        severity: "error"
+      - type: "custom"
+        message: "Is human-in-the-loop escalation working?"
+        severity: "error"
+      - type: "custom"
+        message: "Are agent permissions properly validated?"
+        severity: "error"
+
+  - name: "Test Coverage Check"
+    description: "Ensure adequate test coverage for new code"
+    pattern: "src/**/*.py"
+    checks:
+      - type: "custom"
+        message: "Are there corresponding tests in tests/ directory?"
+        severity: "warning"
+      - type: "custom"
+        message: "Do tests include mocking for external services?"
+        severity: "warning"
+      - type: "custom"
+        message: "Are edge cases covered in tests?"
+        severity: "info"
+
+  - name: "Code Quality Standards"
+    description: "Enforce code quality and best practices"
+    pattern: "**/*.py"
+    checks:
+      - type: "quality"
+        message: "Are type hints provided for all functions?"
+        severity: "warning"
+      - type: "quality"
+        message: "Are docstrings present for public methods?"
+        severity: "warning"
+      - type: "quality"
+        message: "Is error handling comprehensive?"
+        severity: "warning"
+      - type: "quality"
+        message: "Are magic numbers replaced with named constants?"
+        severity: "info"
+
+# Path-specific review focus
+path_instructions:
+  - path: "src/chimera/security/**"
+    instructions: |
+      Focus on security vulnerabilities:
+      - Prompt injection prevention
+      - Input validation and sanitization
+      - Authentication and authorization
+      - Audit logging completeness
+      - Zero-trust architecture compliance
+
+  - path: "src/chimera/commerce/**"
+    instructions: |
+      Focus on financial safety:
+      - Budget limit enforcement
+      - CFO approval workflows
+      - Transaction validation
+      - Audit trail completeness
+      - Risk assessment accuracy
+
+  - path: "src/chimera/agents/**"
+    instructions: |
+      Focus on agent behavior:
+      - Confidence-based escalation
+      - Permission validation
+      - Human-in-the-loop integration
+      - Error handling and recovery
+      - Resource management
+
+  - path: "src/chimera/mcp/**"
+    instructions: |
+      Focus on integration safety:
+      - API contract compliance
+      - Error handling for external services
+      - Timeout and retry logic
+      - Rate limiting implementation
+      - Capability validation
+
+  - path: "tests/**"
+    instructions: |
+      Focus on test quality:
+      - Adequate coverage of edge cases
+      - Proper use of mocking
+      - Clear test descriptions
+      - Assertion completeness
+      - Test isolation
+
+# Ignore patterns
+ignore:
+  - "**/__pycache__/**"
+  - "**/*.pyc"
+  - "**/node_modules/**"
+  - "**/.venv/**"
+  - "**/dist/**"
+  - "**/build/**"
+  - "**/.pytest_cache/**"
+  - "**/.mypy_cache/**"
+
+# Review tone and style
+tone_instructions: |
+  - Be constructive and educational
+  - Explain WHY something is a concern, not just WHAT
+  - Suggest specific improvements with code examples
+  - Prioritize security and spec alignment issues
+  - Acknowledge good practices when present
+  - Focus on enterprise-grade quality standards
