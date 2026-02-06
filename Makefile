@@ -62,7 +62,7 @@ test: ## Run tests in Docker container
 	@if [ -f test_docker.sh ]; then \
 		./test_docker.sh; \
 	else \
-		docker run --rm -v "$(pwd)":/app -w /app python:3.11-slim bash -c "pip install -q uv && uv sync --all-extras && uv run pytest tests/unit -v"; \
+		docker run --rm -v "$(CURDIR)":/app -w /app python:3.11-slim bash -c "pip install -q uv && uv sync --all-extras && uv run pytest tests/unit -v"; \
 	fi
 
 test-local: ## Run unit tests locally

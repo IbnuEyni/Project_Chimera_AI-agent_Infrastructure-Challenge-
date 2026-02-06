@@ -1,10 +1,10 @@
 """Commerce Manager logic - TDD Implementation."""
-from .contract import CommerceRequest, CommerceResponse
+from .contract import FinancialApprovalInput, FinancialApprovalOutput
 
 
 class CommerceManager:
     """TDD: Minimal implementation to make tests fail meaningfully."""
     
-    async def approve_transaction(self, request: CommerceRequest) -> CommerceResponse:
+    async def approve_transaction(self, request: FinancialApprovalInput) -> FinancialApprovalOutput:
         """Approve transaction - NOT IMPLEMENTED YET."""
-        raise NotImplementedError("TDD: Commerce approval not implemented")
+        raise NotImplementedError("TDD: Finance approval not implemented")

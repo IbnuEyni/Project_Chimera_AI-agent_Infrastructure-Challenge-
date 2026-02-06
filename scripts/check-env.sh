@@ -3,7 +3,13 @@
 # Ensures critical keys are present and meet security formats
 # Prevents AI Agent from deploying with malformed or insecure keys
 
-((ERRORS++))
+#!/bin/bash
+# Environment Variable Validation Script
+# Ensures critical keys are present and meet security formats
+# Prevents AI Agent from deploying with malformed or insecure keys
+
+
+echo "🔒 Project Chimera - Environment Variable Validation"
 
 echo "🔒 Project Chimera - Environment Variable Validation"
 echo "===================================================="

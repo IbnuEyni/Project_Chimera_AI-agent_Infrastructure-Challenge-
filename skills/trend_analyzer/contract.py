@@ -10,7 +10,7 @@ class TrendAnalysisInput(BaseModel):
     timeframe: str
     min_velocity: float = 0.5
 
-from pydantic import Field
+from pydantic import BaseModel, Field
 from typing import Literal, Any
 class TrendReport(BaseModel):
     """Individual trend report."""

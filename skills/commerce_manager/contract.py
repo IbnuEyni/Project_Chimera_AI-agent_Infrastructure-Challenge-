@@ -1,5 +1,5 @@
 """Commerce Manager contract definitions."""
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Literal
 from decimal import Decimal
 
