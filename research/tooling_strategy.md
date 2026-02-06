@@ -58,7 +58,7 @@ To maintain high-velocity, spec-driven development, we utilize the Model Context
   "mcpServers": {
     "filesystem": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/home/shuaib/Desktop/python/10AcademyWeek0phase2"]
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "${workspaceFolder}"]
     }
   }
 }

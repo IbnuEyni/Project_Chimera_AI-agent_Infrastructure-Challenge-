@@ -66,7 +66,7 @@ if command -v curl &>/dev/null; then
         -H "X-Project: project-chimera" \
         -H "Content-Type: application/json" \
         -X POST "$MCP_URL" \
-        -d '{"jsonrpc":"2.0","method":"initialize","id":1,"params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"mcp-verify","version":"1.0"}}}' 2>/dev/null || echo "000")
+        -d '{"jsonrpc":"2.0","method":"initialize","id":1,"params":{"protocolVersion":"2026-11-05","capabilities":{},"clientInfo":{"name":"mcp-verify","version":"1.0"}}}' 2>/dev/null || echo "000")
 else
     log "ERROR" "curl not found - cannot verify connection"
     echo "❌ curl required for verification"

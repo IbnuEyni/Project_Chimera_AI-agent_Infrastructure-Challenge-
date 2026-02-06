@@ -3,7 +3,7 @@
 # Ensures critical keys are present and meet security formats
 # Prevents AI Agent from deploying with malformed or insecure keys
 
-set -e
+((ERRORS++))
 
 echo "🔒 Project Chimera - Environment Variable Validation"
 echo "===================================================="
@@ -28,6 +28,15 @@ fi
 echo "✅ .env file found"
 echo ""
 
+# Load .env file safely (only KEY=VALUE lines)
+while IFS='=' read -r key value; do
+    # Skip comments and empty lines
+    [[ -z "$key" || "$key" =~ ^# ]] && continue
+    # Remove quotes from value
+    value="${value%\"}"
+    value="${value#\"}"
+    export "$key=$value"
+done < .env
 # Load .env file
 set -a
 source .env

@@ -258,7 +258,7 @@ def sample_budget_limits():
 # Environment Configuration
 # ============================================================================
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 def test_env_vars(monkeypatch):
     """Set test environment variables."""
     test_vars = {
@@ -277,19 +277,6 @@ def test_env_vars(monkeypatch):
         monkeypatch.setenv(key, value)
     
     return test_vars
-
-
-# ============================================================================
-# Async Test Support
-# ============================================================================
-
-@pytest.fixture
-def event_loop():
-    """Provide event loop for async tests."""
-    import asyncio
-    loop = asyncio.get_event_loop_policy().new_event_loop()
-    yield loop
-    loop.close()
 
 
 # ============================================================================

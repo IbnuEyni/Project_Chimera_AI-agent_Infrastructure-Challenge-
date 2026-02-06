@@ -14,6 +14,7 @@ import pytest
 from pydantic import ValidationError
 from decimal import Decimal
 from datetime import datetime
+from skills.trend_analyzer.contract import TrendAnalysisInput
 
 
 # Attempt to import non-existent logic to force failure (TDD)
@@ -181,16 +182,21 @@ class TestTrendAnalysisExecution:
         if TrendAnalyzer is None:
             pytest.fail("TrendAnalyzer class not implemented in skills/trend_analyzer/logic.py")
         
+        
         analyzer = TrendAnalyzer()
         
-        # Mocking MCP resource input
-        mock_resources = ["mcp://twitter/trends"]
+        # Create input per ChimeraSkill interface contract
+        input_data = TrendAnalysisInput(
+            keywords=["twitter"],
+            platforms=["twitter"],
+            timeframe="24h"
+        )
         
         # Async call per ChimeraSkill interface
-        result = await analyzer.execute(sources=mock_resources)
+        result = await analyzer.execute(input_data)
         
-        assert len(result.signals) > 0, "No signals detected"
-        assert isinstance(result.signals[0], TrendSignal), "Invalid signal type"
+        assert len(result.trends) > 0, "No trends detected"
+        assert result.execution_time_ms < 2000
     
     @pytest.mark.asyncio
     async def test_trend_analyzer_performance_sla(self):
