@@ -57,7 +57,15 @@ security: ## Run security checks
 quality: format lint type-check security ## Run all code quality checks
 
 # Testing
-test: ## Run unit tests
+test: ## Run tests in Docker container
+	@echo "🧪 Running tests in Docker..."
+	@if [ -f test_docker.sh ]; then \
+		./test_docker.sh; \
+	else \
+		docker run --rm -v "$$(pwd)":/app -w /app python:3.11-slim bash -c "pip install -q pytest && pytest tests/unit -v"; \
+	fi
+
+test-local: ## Run unit tests locally
 	uv run pytest tests/unit -v
 
 spec-check: ## Verify code aligns with specifications
@@ -199,6 +207,9 @@ commit: ## Interactive commit with conventional commits
 	git commit
 
 # Environment Variables
+check-env: ## Validate environment variables for security
+	@./scripts/check-env.sh
+
 env-template: ## Create .env template
 	@echo "Creating .env template..."
 	@./scripts/gen-env-template.sh

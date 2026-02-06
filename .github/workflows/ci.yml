@@ -64,7 +64,7 @@ jobs:
         uv run safety check
     
     - name: Run tests
-      run: uv run pytest tests --cov=src --cov-report=xml --junitxml=junit.xml
+      run: make test-local
       env:
         DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_chimera
         REDIS_URL: redis://localhost:6379
