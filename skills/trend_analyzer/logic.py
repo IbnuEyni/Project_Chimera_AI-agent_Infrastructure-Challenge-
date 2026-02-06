@@ -26,3 +26,4 @@ class TrendAnalyzer:
             keyword_upper = keyword.upper()
             if "DROP TABLE" in keyword_upper or ";" in keyword:
                 return False
+        return True

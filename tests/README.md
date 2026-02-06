@@ -46,7 +46,7 @@ tests/
 - ✅ Safety validation implemented
 - ✅ Database schema matches spec
 
-**Expected Status**: 10 tests, 7 PASSING, 3 FAILING (correct)
+**Expected Status**: 10 tests, 8 PASSING, 2 FAILING (correct)
 
 ---
 
@@ -106,12 +106,11 @@ pytest tests/unit/test_trend_fetcher.py::TestTrendAnalysisContract::test_trend_a
 ### test_trend_fetcher.py
 ```
 COLLECTED: 10 tests
-PASSED: 7 tests (schema validation works)
-FAILED: 3 tests (expected - execution logic missing)
+PASSED: 8 tests (schema validation + safety validation work)
+FAILED: 2 tests (expected - execution logic missing)
 
 Failures:
 - NotImplementedError: TDD: Implementation pending
-- AssertionError: validate_safety returns None
 ```
 
 ### test_skills_interface.py
