@@ -1,4 +1,4 @@
-FROM python:3.11-slim as base
+FROM python:3.11-slim AS base
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
@@ -13,9 +13,9 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-# Install uv
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh
-ENV PATH="/root/.cargo/bin:$PATH"
+# Install uv and add to PATH in same layer
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh && \
+    mv /root/.local/bin/uv /usr/local/bin/uv
 
 # Set work directory
 WORKDIR /app
@@ -24,11 +24,12 @@ WORKDIR /app
 COPY pyproject.toml uv.lock* ./
 
 # Install dependencies
-RUN uv sync --frozen --no-dev
+RUN pip install pytest pytest-cov pydantic
 
 # Copy application code
-COPY src/ ./src/
-COPY config/ ./config/
+COPY skills/ ./skills/
+COPY tests/ ./tests/
+COPY specs/ ./specs/
 
 # Create non-root user
 RUN useradd --create-home --shell /bin/bash chimera
@@ -42,5 +43,5 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8000/health || exit 1
 
-# Run application
-CMD ["uv", "run", "uvicorn", "chimera.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Run tests by default
+CMD ["python", "-m", "pytest", "tests/", "-v", "--tb=short"]
