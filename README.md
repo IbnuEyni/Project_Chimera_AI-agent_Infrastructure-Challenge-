@@ -24,7 +24,8 @@ Project Chimera is not just another AI system. It's a **production-ready autonom
 - **📊 Real-Time Analytics**: Comprehensive monitoring and observability
 
 ### **Key Performance Indicators**
-```
+
+```text
 🎯 Target Metrics                    📈 Current Status
 ├─ Concurrent Agents: 10,000+       ├─ Architecture: ✅ Complete
 ├─ Response Time: <2000ms (P95)     ├─ Database Schema: ✅ Production-Ready
@@ -47,12 +48,12 @@ graph TD
     B --> D[Director Agents]
     B --> E[Artist Agents]
     B --> F[CFO Agent]
-    
+
     C --> G[Social Media APIs]
     D --> H[Content Strategy]
     E --> I[Media Production]
     F --> J[Financial Governance]
-    
+
     K[SafetyGateway] --> A
     L[MCP Integration] --> B
     M[OpenClaw DHT] --> A
@@ -60,37 +61,41 @@ graph TD
 
 ### **Agent Specialization Matrix**
 
-| Agent Type | Responsibility | Scale | Response Time |
-|------------|---------------|-------|---------------|
-| **Scout** | Trend detection & analysis | 1,000+ | <2000ms |
-| **Director** | Content strategy & briefs | 100+ | <1000ms |
-| **Artist** | Media production (video/image) | 500+ | <30000ms |
-| **CFO** | Financial approval & governance | 1 | <300ms |
-| **Judge** | Quality assurance & validation | 50+ | <500ms |
+| Agent Type   | Responsibility                  | Scale  | Response Time |
+| ------------ | ------------------------------- | ------ | ------------- |
+| **Scout**    | Trend detection & analysis      | 1,000+ | <2000ms       |
+| **Director** | Content strategy & briefs       | 100+   | <1000ms       |
+| **Artist**   | Media production (video/image)  | 500+   | <30000ms      |
+| **CFO**      | Financial approval & governance | 1      | <300ms        |
+| **Judge**    | Quality assurance & validation  | 50+    | <500ms        |
 
 ---
 
 ## 🎯 **Core Capabilities**
 
 ### **1. Autonomous Trend Intelligence**
+
 - **Real-time social media monitoring** across Twitter, TikTok, Google Trends
 - **Semantic filtering** with relevance and alpha scoring
 - **Sentiment analysis** with bounded confidence intervals [-1.0, 1.0]
 - **Velocity tracking** for viral trend prediction
 
 ### **2. Content Production Pipeline**
+
 - **Automated script generation** with personality profiling
 - **Multi-modal asset creation** (video, image, audio, text)
 - **Quality scoring** with >0.8 threshold enforcement
 - **Platform optimization** for YouTube, TikTok, Instagram
 
 ### **3. Economic Sovereignty**
+
 - **CFO Agent approval** for all financial transactions
 - **Budget enforcement** at database constraint level
 - **ROI tracking** with 1.5x minimum hurdle rate
 - **Cryptographic signatures** for audit trail integrity
 
 ### **4. Zero-Trust Security**
+
 - **Input validation** through SafetyGateway
 - **Prompt injection protection** with ML-based detection
 - **Rate limiting** and DDoS protection
@@ -101,6 +106,7 @@ graph TD
 ## 📊 **Technical Specifications**
 
 ### **Performance Benchmarks**
+
 ```yaml
 Latency Targets (P95):
   - Agent Decision Loop: <2000ms
@@ -123,6 +129,7 @@ Resource Limits:
 ```
 
 ### **Technology Stack**
+
 ```yaml
 Core Platform:
   - Runtime: Python 3.11+
@@ -150,6 +157,7 @@ Infrastructure:
 ## 🗄️ **Database Architecture**
 
 ### **Entity Relationship Overview**
+
 ```sql
 -- Core agent coordination
 agents (id, role, status, config, capabilities)
@@ -171,6 +179,7 @@ ledger ← budget_tracking
 ```
 
 ### **Key Constraints & Indexes**
+
 - **Performance**: Optimized indexes on high-query columns
 - **Security**: Sentiment scores bounded [-1.0, 1.0]
 - **Financial**: Budget constraints enforced at DB level
@@ -181,6 +190,7 @@ ledger ← budget_tracking
 ## 🌐 **OpenClaw Network Integration**
 
 ### **Decentralized Agent Discovery**
+
 Project Chimera participates in the **OpenClaw Distributed Hash Table (DHT)** network, enabling:
 
 - **Service Discovery**: Broadcast capabilities every 60 seconds
@@ -189,11 +199,12 @@ Project Chimera participates in the **OpenClaw Distributed Hash Table (DHT)** ne
 - **Economic Integration**: Compute credit transactions with escrow
 
 ### **Network Capabilities**
+
 ```json
 {
   "capabilities": [
     "trend_analysis",
-    "video_synthesis", 
+    "video_synthesis",
     "market_prediction",
     "content_generation"
   ],
@@ -208,6 +219,7 @@ Project Chimera participates in the **OpenClaw Distributed Hash Table (DHT)** ne
 ## 🛡️ **Security & Governance**
 
 ### **Zero-Trust Architecture**
+
 ```python
 # All inputs validated through SafetyGateway
 def process_request(user_input: str) -> Response:
@@ -218,19 +230,21 @@ def process_request(user_input: str) -> Response:
 ```
 
 ### **Financial Safety Protocols**
+
 - **CFO Approval Required**: All transactions >$0.01
 - **Budget Caps**: Daily/Weekly/Monthly limits enforced
 - **ROI Validation**: Minimum 1.5x hurdle rate
 - **Cryptographic Signatures**: Immutable audit trail
 
 ### **Kill Switch Protocol**
+
 ```python
 # Emergency halt for Black Swan events
 class KillSwitchProtocol:
     def check_confidence(self, score: float):
         if score < 0.5:
             raise PanicException(PanicReason.LOW_CONFIDENCE)
-    
+
     def check_market_crash(self, volatility: float):
         if volatility > 70.0:
             raise PanicException(PanicReason.MARKET_CRASH)
@@ -241,16 +255,18 @@ class KillSwitchProtocol:
 ## 🚀 **Quick Start**
 
 ### **Prerequisites**
+
 - Python 3.11+
 - Docker & Docker Compose
 - PostgreSQL 14+
 - Redis 7+
 
 ### **Installation**
+
 ```bash
 # Clone repository
-git clone https://github.com/10academy/project-chimera.git
-cd project-chimera
+git clone https://github.com/IbnuEyni/Project_Chimera_AI-agent_Infrastructure-Challenge-.git
+cd Project_Chimera_AI-agent_Infrastructure-Challenge-
 
 # Setup environment
 chmod +x setup.sh
@@ -271,6 +287,7 @@ make serve
 ```
 
 ### **Docker Deployment**
+
 ```bash
 # Build and run with Docker Compose
 docker-compose up -d
@@ -289,6 +306,7 @@ docker-compose logs -f
 Project Chimera follows **strict TDD methodology** with executable requirements:
 
 ### **Test Coverage Matrix**
+
 ```yaml
 Unit Tests:
   - ✅ Schema Validation: 8/8 passing
@@ -307,6 +325,7 @@ End-to-End Tests:
 ```
 
 ### **TDD Demonstration**
+
 ```bash
 # Run tests to see TDD in action
 make test-local
@@ -321,6 +340,7 @@ make test-local
 ## 📈 **Monitoring & Observability**
 
 ### **Metrics Dashboard**
+
 ```yaml
 Agent Performance:
   - agent_tasks_total{role, status}
@@ -339,6 +359,7 @@ System Health:
 ```
 
 ### **Health Check Endpoint**
+
 ```bash
 curl http://localhost:8000/health
 # Returns comprehensive system status
@@ -349,6 +370,7 @@ curl http://localhost:8000/health
 ## 🏢 **Enterprise Features**
 
 ### **Production Readiness**
+
 - ✅ **Kubernetes Native**: Helm charts included
 - ✅ **CI/CD Pipeline**: GitHub Actions with automated testing
 - ✅ **Monitoring Stack**: Prometheus + Grafana + AlertManager
@@ -356,12 +378,12 @@ curl http://localhost:8000/health
 - ✅ **Disaster Recovery**: Multi-region deployment support
 
 ### **Compliance & Audit**
-- ✅ **SOC 2 Ready**: Comprehensive audit logging
-- ✅ **GDPR Compliant**: Data privacy by design
+
 - ✅ **Financial Audit**: Immutable transaction ledger
 - ✅ **Security Audit**: Penetration testing ready
 
 ### **Scalability**
+
 - ✅ **Horizontal Scaling**: Kubernetes auto-scaling
 - ✅ **Database Sharding**: Multi-tenant architecture
 - ✅ **CDN Integration**: Global asset distribution
@@ -372,7 +394,8 @@ curl http://localhost:8000/health
 ## 📚 **Documentation**
 
 ### **Comprehensive Specifications**
-```
+
+```text
 specs/
 ├── _meta.md              # Vision, constraints, KPIs
 ├── functional.md         # User stories, workflows
@@ -382,6 +405,7 @@ specs/
 ```
 
 ### **Development Guides**
+
 - 🔧 **Setup Guide**: Environment configuration
 - 🧪 **Testing Guide**: TDD methodology and test patterns
 - 🚀 **Deployment Guide**: Production deployment strategies
@@ -399,6 +423,7 @@ Project Chimera follows **specification-driven development**:
 4. **Performance Validation**: Must meet <2s response time targets
 
 ### **Development Workflow**
+
 ```bash
 # Setup development environment
 make setup-golden
@@ -424,6 +449,7 @@ MIT License - see [LICENSE](LICENSE) for details.
 ## 🏆 **Recognition**
 
 Project Chimera represents **enterprise-grade autonomous AI** with:
+
 - **Production-ready architecture** for 10,000+ agent coordination
 - **Financial sovereignty** with cryptographic audit trails
 - **Zero-trust security** with comprehensive threat modeling
@@ -438,7 +464,6 @@ Project Chimera represents **enterprise-grade autonomous AI** with:
 
 **🧬 Project Chimera - Where AI Meets Autonomy**
 
-[![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/10academy/project-chimera)
-[![Documentation](https://img.shields.io/badge/docs-available-brightgreen?style=for-the-badge)](https://chimera.10academy.org)
+[![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/IbnuEyni/Project_Chimera_AI-agent_Infrastructure-Challenge-.git)
 
 </div>
