@@ -1,18 +1,19 @@
-"""Asset Ledger - TDD Stub Implementation.
+"""Asset Ledger - Production Implementation.
 
-This module contains stub implementations that will cause logical test failures.
-This demonstrates proper TDD RED phase where tests fail for business logic reasons.
+Implements reasoning hash and explainable P&L reporting.
 """
 
+import hashlib
+import json
 from decimal import Decimal
 from datetime import datetime
+from typing import List, Optional
 
 
 class ReasoningContext:
-    """TDD Stub: Reasoning context for financial decisions."""
+    """Reasoning context for financial decisions with cryptographic hash."""
     
     def __init__(self, **kwargs):
-        # Store all kwargs but don't use them properly (TDD failure)
         self.trend_id = kwargs.get('trend_id', '')
         self.trend_topic = kwargs.get('trend_topic', '')
         self.projected_roi = kwargs.get('projected_roi', 0.0)
@@ -21,70 +22,144 @@ class ReasoningContext:
         self.agent_id = kwargs.get('agent_id', '')
 
     def to_hash(self) -> str:
-        """TDD Stub: Return empty string instead of SHA256 hash."""
-        # Logical Fail: Should return 64-char SHA256 hash
-        return ""
+        """Generate SHA256 hash of reasoning context.
+        
+        Returns:
+            64-character hex string (SHA256)
+        """
+        context_data = {
+            'trend_id': self.trend_id,
+            'trend_topic': self.trend_topic,
+            'projected_roi': self.projected_roi,
+            'confidence_score': self.confidence_score,
+            'justification': self.justification,
+            'agent_id': self.agent_id
+        }
+        # Create deterministic JSON string
+        json_str = json.dumps(context_data, sort_keys=True)
+        # Generate SHA256 hash
+        return hashlib.sha256(json_str.encode()).hexdigest()
 
 
 class LedgerEntry:
-    """TDD Stub: Ledger entry with reasoning context."""
+    """Ledger entry with reasoning context and ROI tracking."""
     
     def __init__(self, **kwargs):
-        # TDD Stub: Initialize with wrong values
-        self.reasoning_context = None  # Should be ReasoningContext
-        self.amount = Decimal("0.00")  # Should use actual amount
-        self.actual_revenue = Decimal("0.00")
+        self.tx_id = kwargs.get('tx_id', '')
+        self.agent_id = kwargs.get('agent_id', '')
+        self.amount = kwargs.get('amount', Decimal('0.00'))
+        self.actual_revenue = Decimal('0.00')
+        
+        # Create reasoning context
+        self.reasoning_context = ReasoningContext(
+            trend_id=kwargs.get('trend_id', ''),
+            trend_topic=kwargs.get('trend_topic', ''),
+            projected_roi=kwargs.get('projected_roi', 0.0),
+            confidence=kwargs.get('confidence', 0.0),
+            justification=kwargs.get('justification', ''),
+            agent_id=kwargs.get('agent_id', '')
+        )
+        
+        # Store original hash for verification
+        self._original_hash = self.reasoning_context.to_hash()
 
     def verify_reasoning_hash(self) -> bool:
-        """TDD Stub: Always return False."""
-        # Logical Fail: Should verify hash integrity
-        return False
+        """Verify reasoning hash integrity.
+        
+        Returns:
+            True if hash matches original, False otherwise
+        """
+        current_hash = self.reasoning_context.to_hash()
+        return current_hash == self._original_hash
 
     def calculate_roi(self) -> float:
-        """TDD Stub: Return 0.0 regardless of math."""
-        # Logical Fail: Should calculate (revenue - cost) / cost
-        return 0.0
+        """Calculate ROI from actual revenue.
+        
+        Returns:
+            ROI as decimal (e.g., 1.5 = 150% return)
+        """
+        if self.amount == 0:
+            return 0.0
+        return float((self.actual_revenue - self.amount) / self.amount)
     
     def to_pnl_report(self) -> dict:
-        """TDD Stub: Return empty dict."""
-        # Logical Fail: Should return proper P&L structure
-        return {}
+        """Convert to P&L report entry.
+        
+        Returns:
+            Dictionary with transaction details and justification
+        """
+        return {
+            'tx_id': self.tx_id,
+            'agent_id': self.agent_id,
+            'amount': float(self.amount),
+            'revenue': float(self.actual_revenue),
+            'roi': self.calculate_roi(),
+            'trend': self.reasoning_context.trend_topic,
+            'justification': self.reasoning_context.justification,
+            'reasoning_hash': self.reasoning_context.to_hash()
+        }
 
 
 class PLReport:
-    """TDD Stub: P&L report generator."""
+    """P&L report generator with transaction aggregation."""
     
     def __init__(self, period_start: datetime, period_end: datetime):
         self.period_start = period_start
         self.period_end = period_end
-        # TDD Stub: Initialize with wrong values
-        self.total_spend = Decimal("0.00")
-        self.total_revenue = Decimal("0.00")
-        self.net_profit = Decimal("0.00")
+        self.transactions: List[LedgerEntry] = []
+        self.total_spend = Decimal('0.00')
+        self.total_revenue = Decimal('0.00')
+        self.net_profit = Decimal('0.00')
         self.roi_average = 0.0
 
     def add_transaction(self, entry: LedgerEntry):
-        """TDD Stub: Don't actually add transactions."""
-        # Logical Fail: Should accumulate transaction data
-        pass
+        """Add transaction to report.
+        
+        Args:
+            entry: LedgerEntry to include in report
+        """
+        self.transactions.append(entry)
 
     def calculate_summary(self):
-        """TDD Stub: Don't calculate anything."""
-        # Logical Fail: Should calculate totals from transactions
-        pass
+        """Calculate summary statistics from transactions."""
+        self.total_spend = sum(t.amount for t in self.transactions)
+        self.total_revenue = sum(t.actual_revenue for t in self.transactions)
+        self.net_profit = self.total_revenue - self.total_spend
+        
+        # Calculate average ROI
+        if self.transactions:
+            roi_sum = sum(t.calculate_roi() for t in self.transactions)
+            self.roi_average = roi_sum / len(self.transactions)
 
     def to_report(self) -> dict:
-        """TDD Stub: Return minimal report structure."""
-        # Logical Fail: Should return comprehensive report
+        """Generate comprehensive P&L report.
+        
+        Returns:
+            Dictionary with summary and transaction details
+        """
         return {
-            "summary": {
-                "transaction_count": 0,  # Should be actual count
-                "net_profit": 0.0  # Should be calculated value
-            }
+            'period': {
+                'start': self.period_start.isoformat(),
+                'end': self.period_end.isoformat()
+            },
+            'summary': {
+                'transaction_count': len(self.transactions),
+                'total_spend': float(self.total_spend),
+                'total_revenue': float(self.total_revenue),
+                'net_profit': float(self.net_profit),
+                'roi_average': self.roi_average
+            },
+            'transactions': [t.to_pnl_report() for t in self.transactions]
         }
 
 
 def create_ledger_entry(*args, **kwargs) -> LedgerEntry:
-    """TDD Stub: Create ledger entry with wrong initialization."""
-    # Logical Fail: Should properly initialize with provided data
-    return LedgerEntry()
+    """Create ledger entry with reasoning context.
+    
+    Args:
+        **kwargs: Transaction parameters including trend context
+        
+    Returns:
+        Initialized LedgerEntry
+    """
+    return LedgerEntry(**kwargs)
