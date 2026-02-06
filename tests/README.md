@@ -46,7 +46,7 @@ tests/
 - ✅ Safety validation implemented
 - ✅ Database schema matches spec
 
-**Expected Status**: 9 tests, all FAILING (correct)
+**Expected Status**: 10 tests, 7 PASSING, 3 FAILING (correct)
 
 ---
 
@@ -105,13 +105,13 @@ pytest tests/unit/test_trend_fetcher.py::TestTrendAnalysisContract::test_trend_a
 
 ### test_trend_fetcher.py
 ```
-COLLECTED: 9 tests
-PASSED: 1 test (test_trends_table_schema - placeholder)
-FAILED: 8 tests (expected - implementations missing)
+COLLECTED: 10 tests
+PASSED: 7 tests (schema validation works)
+FAILED: 3 tests (expected - execution logic missing)
 
 Failures:
-- ModuleNotFoundError: skills.trend_analyzer.contract
-- ImportError: TrendAnalyzer class not implemented
+- NotImplementedError: TDD: Implementation pending
+- AssertionError: validate_safety returns None
 ```
 
 ### test_skills_interface.py

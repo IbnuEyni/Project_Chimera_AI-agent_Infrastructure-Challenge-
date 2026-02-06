@@ -309,8 +309,8 @@ Project Chimera follows **strict TDD methodology** with executable requirements:
 
 ```yaml
 Unit Tests:
-  - ✅ Schema Validation: 8/8 passing
-  - ❌ Execution Logic: 2/8 failing (NotImplementedError)
+  - ✅ Schema Validation: 7/10 passing
+  - ❌ Execution Logic: 3/10 failing (NotImplementedError)
   - 🎯 Target Coverage: 90%+
 
 Integration Tests:
@@ -331,8 +331,8 @@ End-to-End Tests:
 make test-local
 
 # Expected output:
-# ✅ 8 tests PASS (contracts work)
-# ❌ 2 tests FAIL (NotImplementedError - TDD RED phase)
+# ✅ 7 tests PASS (contracts work)
+# ❌ 3 tests FAIL (NotImplementedError - TDD RED phase)
 ```
 
 ---
