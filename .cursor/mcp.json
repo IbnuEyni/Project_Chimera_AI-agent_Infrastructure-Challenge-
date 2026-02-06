@@ -1,3 +1,234 @@
 {
-  "mcpServers": {}
+  "mcpServers": {
+    "twitter-mcp": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-twitter"],
+      "env": {
+        "TWITTER_API_KEY": "${TWITTER_API_KEY}",
+        "TWITTER_API_SECRET": "${TWITTER_API_SECRET}",
+        "TWITTER_ACCESS_TOKEN": "${TWITTER_ACCESS_TOKEN}",
+        "TWITTER_ACCESS_SECRET": "${TWITTER_ACCESS_SECRET}"
+      },
+      "tools": [
+        {
+          "name": "search_tweets",
+          "description": "Search recent tweets by keywords",
+          "parameters": {
+            "query": "string",
+            "max_results": "number (10-100)",
+            "start_time": "ISO 8601 datetime (optional)"
+          },
+          "returns": "Array<{id, text, author, created_at, metrics}>"
+        },
+        {
+          "name": "get_trending_topics",
+          "description": "Get current trending topics",
+          "parameters": {
+            "location": "string (WOEID)"
+          },
+          "returns": "Array<{name, tweet_volume, url}>"
+        }
+      ],
+      "spec_requirement": "specs/technical.md#trend-analysis"
+    },
+    "coinbase-agentkit": {
+      "command": "npx",
+      "args": ["-y", "@coinbase/agentkit-mcp-server"],
+      "env": {
+        "CDP_API_KEY_NAME": "${CDP_API_KEY_NAME}",
+        "CDP_API_KEY_PRIVATE_KEY": "${CDP_API_KEY_PRIVATE_KEY}",
+        "NETWORK_ID": "base-sepolia"
+      },
+      "tools": [
+        {
+          "name": "get_balance",
+          "description": "Get wallet balance in USDC",
+          "parameters": {},
+          "returns": "{balance_usdc: number}"
+        },
+        {
+          "name": "transfer",
+          "description": "Transfer USDC to recipient",
+          "parameters": {
+            "recipient": "string (0x address)",
+            "amount": "number (USDC)"
+          },
+          "returns": "{tx_hash: string, status: string}"
+        },
+        {
+          "name": "deploy_nft",
+          "description": "Deploy NFT contract",
+          "parameters": {
+            "name": "string",
+            "symbol": "string",
+            "base_uri": "string"
+          },
+          "returns": "{contract_address: string}"
+        }
+      ],
+      "spec_requirement": "specs/technical.md#agentic-commerce"
+    },
+    "runway-gen2": {
+      "command": "python",
+      "args": ["-m", "mcp_servers.runway"],
+      "env": {
+        "RUNWAY_API_KEY": "${RUNWAY_API_KEY}"
+      },
+      "tools": [
+        {
+          "name": "generate_video",
+          "description": "Generate video from text prompt",
+          "parameters": {
+            "prompt": "string",
+            "duration": "number (4-120 seconds)",
+            "aspect_ratio": "string (16:9, 9:16, 1:1)"
+          },
+          "returns": "{video_url: string, thumbnail_url: string, duration: number}"
+        },
+        {
+          "name": "extend_video",
+          "description": "Extend existing video",
+          "parameters": {
+            "video_url": "string",
+            "prompt": "string",
+            "duration": "number"
+          },
+          "returns": "{video_url: string}"
+        }
+      ],
+      "spec_requirement": "specs/technical.md#asset-factory"
+    },
+    "dalle-3": {
+      "command": "python",
+      "args": ["-m", "mcp_servers.dalle"],
+      "env": {
+        "OPENAI_API_KEY": "${OPENAI_API_KEY}"
+      },
+      "tools": [
+        {
+          "name": "generate_image",
+          "description": "Generate image from text prompt",
+          "parameters": {
+            "prompt": "string",
+            "size": "string (1024x1024, 1792x1024, 1024x1792)",
+            "quality": "string (standard, hd)"
+          },
+          "returns": "{image_url: string, revised_prompt: string}"
+        }
+      ],
+      "spec_requirement": "specs/technical.md#asset-factory"
+    },
+    "google-trends": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-google-trends"],
+      "tools": [
+        {
+          "name": "get_trending_searches",
+          "description": "Get current trending searches",
+          "parameters": {
+            "geo": "string (US, GB, etc.)"
+          },
+          "returns": "Array<{query, traffic, related_queries}>"
+        },
+        {
+          "name": "get_interest_over_time",
+          "description": "Get search interest over time",
+          "parameters": {
+            "keyword": "string",
+            "timeframe": "string (now 1-H, now 7-d, today 12-m)"
+          },
+          "returns": "Array<{date, value}>"
+        }
+      ],
+      "spec_requirement": "specs/technical.md#trend-analysis"
+    },
+    "tiktok-research": {
+      "command": "python",
+      "args": ["-m", "mcp_servers.tiktok"],
+      "env": {
+        "TIKTOK_CLIENT_KEY": "${TIKTOK_CLIENT_KEY}",
+        "TIKTOK_CLIENT_SECRET": "${TIKTOK_CLIENT_SECRET}"
+      },
+      "tools": [
+        {
+          "name": "search_videos",
+          "description": "Search TikTok videos",
+          "parameters": {
+            "query": "string",
+            "max_count": "number (1-100)",
+            "start_date": "string (YYYYMMDD)",
+            "end_date": "string (YYYYMMDD)"
+          },
+          "returns": "Array<{video_id, description, view_count, like_count}>"
+        },
+        {
+          "name": "get_video_comments",
+          "description": "Get comments for a video",
+          "parameters": {
+            "video_id": "string",
+            "max_count": "number"
+          },
+          "returns": "Array<{text, like_count, create_time}>"
+        }
+      ],
+      "spec_requirement": "specs/technical.md#trend-analysis"
+    },
+    "youtube-api": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-youtube"],
+      "env": {
+        "YOUTUBE_API_KEY": "${YOUTUBE_API_KEY}"
+      },
+      "tools": [
+        {
+          "name": "search_videos",
+          "description": "Search YouTube videos",
+          "parameters": {
+            "query": "string",
+            "max_results": "number (1-50)",
+            "order": "string (relevance, date, viewCount)"
+          },
+          "returns": "Array<{video_id, title, description, view_count}>"
+        },
+        {
+          "name": "upload_video",
+          "description": "Upload video to YouTube",
+          "parameters": {
+            "title": "string",
+            "description": "string",
+            "video_file": "string (path)",
+            "tags": "Array<string>"
+          },
+          "returns": "{video_id: string, url: string}"
+        }
+      ],
+      "spec_requirement": "specs/technical.md#content-distribution"
+    },
+    "elevenlabs-voice": {
+      "command": "python",
+      "args": ["-m", "mcp_servers.elevenlabs"],
+      "env": {
+        "ELEVENLABS_API_KEY": "${ELEVENLABS_API_KEY}"
+      },
+      "tools": [
+        {
+          "name": "text_to_speech",
+          "description": "Convert text to speech",
+          "parameters": {
+            "text": "string",
+            "voice_id": "string",
+            "model_id": "string (eleven_monolingual_v1, eleven_multilingual_v2)"
+          },
+          "returns": "{audio_url: string, duration_seconds: number}"
+        },
+        {
+          "name": "get_voices",
+          "description": "List available voices",
+          "parameters": {},
+          "returns": "Array<{voice_id, name, category, description}>"
+        }
+      ],
+      "spec_requirement": "specs/technical.md#asset-factory"
+    }
+  }
 }
