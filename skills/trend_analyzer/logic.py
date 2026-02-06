@@ -23,8 +23,6 @@ class TrendAnalyzer:
     def validate_safety(self, input_data: TrendAnalysisInput) -> bool:
         """Safety validation - minimal implementation."""
         for keyword in input_data.keywords:
-            if "DROP TABLE" in keyword or ";" in keyword:
-                keyword_upper = keyword.upper()
+            keyword_upper = keyword.upper()
             if "DROP TABLE" in keyword_upper or ";" in keyword:
                 return False
-        return True
