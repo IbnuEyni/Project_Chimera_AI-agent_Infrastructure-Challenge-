@@ -60,6 +60,10 @@ quality: format lint type-check security ## Run all code quality checks
 test: ## Run unit tests
 	uv run pytest tests/unit -v
 
+spec-check: ## Verify code aligns with specifications
+	@echo "🔍 Checking spec alignment..."
+	@./scripts/spec-check.sh
+
 test-integration: ## Run integration tests
 	uv run pytest tests/integration -v
 
