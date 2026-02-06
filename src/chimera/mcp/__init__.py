@@ -3,9 +3,23 @@ Model Context Protocol (MCP) Integration Layer for Project Chimera.
 
 This module provides the universal AI interface integration through MCP,
 enabling seamless connection to 200+ MCP servers and dynamic capability discovery.
+
+Tenx MCP Sense integration for telemetry and traceability:
+    from chimera.mcp.sense import get_sense_logger
 """
 
 from typing import Dict, List, Optional, Any, Callable
+
+from chimera.mcp.sense import MCPSenseLogger, get_sense_logger
+
+__all__ = [
+    "MCPIntegrationLayer",
+    "MCPServer",
+    "MCPServerStatus",
+    "MCPCapability",
+    "MCPSenseLogger",
+    "get_sense_logger",
+]
 from dataclasses import dataclass
 from enum import Enum
 import asyncio
